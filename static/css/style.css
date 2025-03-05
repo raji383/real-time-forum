@@ -1,121 +1,251 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
-
-* {
+body {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: "Poppins", sans-serif;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
 }
 
-body {
+/* section{
+    display: none;
+} */
+
+header {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: url('1.jpg') no-repeat;
-    background-size: cover;
-    background-position:center ;
+    justify-content: space-between;
+    background-color: #3f51b5;
+    padding: 20px;
+    text-align: center;
+    color: white;
 }
 
-.page-login {
-    width: 400px;
-    padding: 30px;
-   
-   background-color: transparent;
-    border: 2px solid rgb(225, 225, 225,0.5);
+.links {
+    display: flex;
+   justify-content: end;
+   align-items: center;
+   gap: 10px;
+    padding: 10px 15px;
+    margin-left: 10px;
+}
+
+.links a{
     color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 10px 15px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.links a:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+
+.container {
+    background: white;
+    padding: 20px;
+    margin: 30px auto;
+    width: 50%;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     text-align: center;
 }
 
-.page-login h1 {
-    font-size: 32px;
-    margin-bottom: 20px;
+.div-title,
+.div-description {
+    margin-bottom: 15px;
+    text-align: left;
 }
 
-.input-login {
-    position: relative;
+input,
+textarea {
     width: 100%;
-    height: 50px;
-    margin: 20px 0;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
-.input-login input {
-    width: 100%;
-    height: 100%;
-    background-color: transparent;
-    outline: none;
-    border: 2px solid rgba(225, 225, 225, 0.2);
-    border-radius: 25px;
-    font-size: 16px;
-    color: white;
-    padding: 15px 20px;
-}
-
-.input-login input::placeholder {
-    color: #ddd;
-}
-
-.input-login i {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 20px;
-    color: #fff7f7;
-}
-
-.remember-login {
+.topic-options {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.topic-options label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
     font-size: 14px;
-    margin: 10px 0;
-}
-
-.remember-login label input {
-    accent-color: white;
-    margin-right: 5px;
-}
-
-.remember-login a {
-    color: white;
-    text-decoration: none;
-}
-
-.remember-login a:hover {
-    text-decoration: underline;
-}
-
-
-.btn {
-    width: 100%;
-    padding: 12px;
-    background: white;
-    color: purple;
-    font-size: 16px;
-    border: none;
-    border-radius: 25px;
+    background: #e0e0e0;
+    padding: 8px 12px;
+    border-radius: 20px;
     cursor: pointer;
     transition: 0.3s;
 }
 
-.btn:hover {
-    background: #ddd;
+.topic-options label:hover {
+    background-color: #d0d0d0;
 }
 
-
-.regist {
-    margin-top: 15px;
-    font-size: 14px;
-}
-
-.regist a {
+button.active {
+    background-color: #3f51b5;
     color: white;
-    text-decoration: none;
-    font-weight: bold;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
 }
 
-.regist a:hover {
-    text-decoration: underline;
+button  {
+    background-color: #3f51b5;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
 }
+
+button:hover {
+    background-color: #303f9f;
+}
+
+/* .create {
+    margin: 80px 10px;
+    text-align: center;
+}
+
+#create-Post {
+    background-color: #1f308d;
+    color: white;
+    padding: 60px 60px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+    text-decoration: none;
+} */
+
+.like, .dislike{
+    background-color: #9498aa;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px; 
+}
+
+.main-div {
+    width: 50%;
+    margin: auto;
+}
+
+.post {
+    background: white;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.post h4 {
+    margin: 0;
+    color: #3f51b5;
+}
+
+.post p {
+    color: #555;
+    margin-top: 5px;
+}
+.box {
+    display: flex;
+    gap: 10px;
+    width: 100px;
+    margin-top: 10px;
+}
+
+.reactions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.comment button {
+    margin-top: 25px;
+    font-size: large;
+}
+.comment-text {
+    display:   none;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+
+.main-comment{
+    display: flex;
+}
+
+.comment-text button {
+    font-size: small;
+    padding: 0 2px  ;
+}
+.comment-text input{
+   width: 80%;
+   margin: 10px 10px;
+}
+
+.hihi {
+    display: none;
+}
+
+.comment-content .div{
+    background: #9498aa;
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 10px;
+}
+
+/* side bar  */
+
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+  }
+  
+  .sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+  }
+  
+  .sidenav a:hover {
+    color: #f1f1f1;
+  }
+  
+  .sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+  }

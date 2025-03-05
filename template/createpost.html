@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <title>Forum</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+
+    <header>
+
+
+        <div id="mySidenav" class="sidenav">
+
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <a href="/">
+                <span>Home</span>
+            </a>
+            <a href="/filter?category=Music">
+                <span>Music</span>
+            </a>
+            <a href="/filter?category=Sport">
+                <span>Sport</span>
+            </a>
+            <a href="/filter?category=Gaming">
+                <span>Gaming</span>
+            </a>
+            <a href="/filter?category=Health">
+                <span>Health</span>
+            </a>
+            <a href="/filter?category=General">
+                <span>General</span>
+            </a>
+            <a href="/likes">
+                <span>Likes</span>
+            </a>
+
+        </div>
+        <span style="font-size:20px;cursor:pointer" onclick="openNav()">&#9776; open</span>
+
+        <h1>Forum</h1>
+        <div class="links">
+            {{range $index, $e := .}}
+            {{if eq $index 0}}
+            {{if $e.User.IsLoggedIn}}
+            <span>Welcome, {{$e.User.Username}}</span>
+            <a href="/logout">Logout</a>
+            {{else}}
+            <a href="/login-page">Log in</a>
+            {{end}}
+            {{end}}
+            {{end}}
+        </div>
+
+
+
+    </header>
+
+    <section>
+        <form action="/posts" method="get">
+            <div class="container">
+                <h3>Create Post</h3>
+                <div class="div-title">
+                    <label for="title">Title :</label>
+                    <input type="text" name="title" id="title" required>
+                </div>
+                <div class="div-description">
+                    <label for="description">description :</label>
+                    <textarea name="description" id="description" rows="4" required></textarea>
+                </div>
+                <div class="topic-options">
+                    <label><input type="checkbox" id="music" name="topic" value="Music"> Music</label>
+                    <label><input type="checkbox" id="sport" name="topic" value="Sport"> Sport</label>
+                    <label><input type="checkbox" id="gaming" name="topic" value="Gaming"> Gaming</label>
+                    <label><input type="checkbox" id="health" name="topic" value="Health"> Health</label>
+                    <label><input type="checkbox" id="general" name="topic" value="General"> General</label>
+                </div>
+                <button type="submit">Post</button>
+            </div>
+        </form>
+    </section>
+
+    <script>
+        function openNav() {
+            document.getElementById("mySidenav").style.width = "250px";
+        }
+
+        function closeNav() {
+            document.getElementById("mySidenav").style.width = "0";
+        }
+    </script>
+
+
+</body>
+
+</html>
