@@ -12,17 +12,18 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: url('1.jpg') no-repeat;
+    background: url('2.jpg') no-repeat;
     background-size: cover;
-    background-position:center ;
+    background-position: center;
 }
 
 .page-login {
     width: 400px;
     padding: 30px;
-   
-   background-color: transparent;
-    border: 2px solid rgb(225, 225, 225,0.5);
+
+    background-color: transparent;
+    backdrop-filter: blur(20px);
+    border: 2px solid rgb(225, 225, 225, 0.2);
     color: white;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);

@@ -31,7 +31,9 @@
                     <input type="password" name="pass2" id="pass2" required placeholder="Confirm Password">
                     <i class='bx bxs-lock-alt'></i>
                 </div>
-                <div id="errorMsg" style="display:none; color:red;"></div>
+
+                <div id="errorMsg" style="display:none; color:red; margin-bottom: 10px;"></div>
+
                 <button class="btn" type="submit">Sign Up</button>
                 <div class="regist">
                     <p>Already have an account? <a href="/login-page">Login</a></p>
@@ -61,14 +63,7 @@
             const end = email.endsWith("@gmail.com")
             return start && end
         }
-
         btn.addEventListener("click", (e) => {
-            if (pass1.value !== pass2.value) {
-                errorMsg.textContent = 'Password not match';
-                errorMsg.style.display = "block";
-                e.preventDefault()
-                return
-            }
 
             if (!isGmail(email.value)) {
                 errorMsg.textContent = "Email must be a valid Gmail address.";
@@ -80,6 +75,13 @@
 
             if (!isStrongPassword(pass1.value)) {
                 errorMsg.textContent = "Password must be at least 8 characters long and include at least one number, one lowercase letter, and one uppercase letter.";
+                errorMsg.style.display = "block";
+                e.preventDefault()
+                return
+            }
+
+            if (pass1.value !== pass2.value) {
+                errorMsg.textContent = 'Password not match';
                 errorMsg.style.display = "block";
                 e.preventDefault()
                 return

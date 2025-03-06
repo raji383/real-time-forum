@@ -7,6 +7,98 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <title>Forum</title>
     <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .div-title,
+        .div-description {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        .topic-options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .topic-options label {
+            background: #eee;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .topic-options input {
+            display: none;
+        }
+
+        .topic-options label:hover,
+        .topic-options input:checked+label {
+            background: #007bff;
+            color: white;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
 </head>
 
 <body>
@@ -42,7 +134,9 @@
         </div>
         <span style="font-size:20px;cursor:pointer" onclick="openNav()">&#9776; open</span>
 
-        <h1>Forum</h1>
+        <a href="/">
+            <h1>Forum</h1>
+        </a>
         <div class="links">
             {{range $index, $e := .}}
             {{if eq $index 0}}
