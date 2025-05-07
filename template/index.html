@@ -1,125 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <title>Forum</title>
-    <link rel="stylesheet" href="/static/css/style.css">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
+  <link rel="stylesheet" href="/static/css/style.css"/>
+  <title>Forum</title>
 </head>
-
 <body>
-
-    <header>
-
-
-        <div id="mySidenav" class="sidenav">
-
-            <a class="closebtn" onclick="closeNav()">&times;</a>
-            <a href="/">
-                <span>Home</span>
-            </a>
-            <a href="/filter?category=Music">
-                <span>Music</span>
-            </a>
-            <a href="/filter?category=Sport">
-                <span>Sport</span>
-            </a>
-            <a href="/filter?category=Gaming">
-                <span>Gaming</span>
-            </a>
-            <a href="/filter?category=Health">
-                <span>Health</span>
-            </a>
-            <a href="/filter?category=General">
-                <span>General</span>
-            </a>
-            <a href="/liked-posts">
-                <span>My Likes</span>
-            </a>
-
-        </div>
-        <span style="font-size:20px;cursor:pointer" onclick="openNav()">&#9776; open</span>
-        
-        <h1>Forum</h1>
-
-        <div class="links">
-            {{range $index, $e := .}}
-            {{if eq $index 0}}
-            {{if $e.User.IsLoggedIn}}
-            <span>Welcome, <span id="username">{{$e.User.Username}}</span></span>
-            <a href="/logout">Logout</a>
-            {{else}}
-            <a href="/login-page">Log in</a>
-            {{end}}
-            {{end}}
-            {{end}}
-        </div>
-
-
-
-    </header>
-    <div class="create">
-        <a id="create-Post" href="/create-Post">Create New Post</a>
+  <div class="container" id="container">
+    <!-- Sign Up Form -->
+    <div class="form-container sign-up-container">
+      <form id="signupForm" action="/signup" method="post">
+        <h1>Create Account</h1>
+        <input type="text"     placeholder="Nickname"          name="nickname"        required />
+        <input type="number"   placeholder="Age"               name="age" min="13"    required />
+        <select name="gender"   required>
+          <option value="" disabled selected>Gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Prefer not to say</option>
+        </select>
+        <input type="text"     placeholder="First Name"        name="first_name"      required />
+        <input type="text"     placeholder="Last Name"         name="last_name"       required />
+        <input type="email"    placeholder="Email"             name="email"           required />
+        <input type="password" placeholder="Password"          name="password"        required />
+        <input type="password" placeholder="Confirm Password"  name="confirm_password" required />
+        <button type="submit">Sign Up</button>
+      </form>
     </div>
 
+    <!-- Sign In Form -->
+    <div class="form-container sign-in-container">
+      <form id="loginForm" action="/login" method="post">
+        <h1>Sign In</h1>
+        <input type="text"     placeholder="Nickname or Email" name="user"       required />
+        <input type="password" placeholder="Password"          name="password"   required />
+       
+        <button type="submit">Sign In</button>
+      </form>
+    </div>
 
-    <main class="main-div">
-        {{range .}}
-        {{if ne .ID 0}}
-        <div class="post" data-post-id="{{.ID}}">
-            <p>by :
-            <h2>{{.Username}}</h2>
-            </p>
-            <h4>{{.Title}}</h4>
-            <p>{{.Descriptions}}</p>
-            <p>{{.Time}}</p>
-            <span>#{{.Topic}}</span>
-            <div class="reactions">
-                <div class="box">
-                    <button class="like {{if .Reaction.Like}} active {{end}}">
-                        <i class="fa-solid fa-thumbs-up"></i>
-                        <span>{{.Likes}}</span>
-                    </button>
-
-                    <button class="dislike {{if .Reaction.Dislike}} active {{end}}">
-                        <i class="fa-solid fa-thumbs-down"></i>
-                        <span>{{.Dislikes}}</span>
-                    </button>
-                </div>
-                <div class="main-comment" data-post-id="{{.ID}}">
-                    <div class="comment">
-                        <button id="showComment"> <i class="fa-solid fa-comment"></i> </button>
-                    </div>
-                    <div class="comment-text">
-                        <input class="input" type="text" placeholder="comment">
-                        <button id="com" type="submit"> Comment </button>
-                    </div>
-                </div>                
-            </div>
-            <br>
-            <div class="comment-content" data-post-id="{{.ID}}">
-                <div class="hihi">
-                    {{range .Comment}}
-                    <div class="div" id="{{.Id}}">
-                        <h3 class="name">{{.Username}}</h3>
-                        <pre class="content">{{.Text}}</pre>
-                        <span>{{.Time}}</span>
-                    </div>
-                    {{end}}
-                </div>
-                <button class="hide">Show comments</button>
-            </div>
+    <!-- Overlay Panels -->
+    <div class="overlay-container">
+      <div class="overlay">
+        <div class="overlay-panel overlay-left">
+          <h1>Welcome Back!</h1>
+          <p>If you already have an account, please sign in.</p>
+          <button class="ghost" id="signIn">Sign In</button>
         </div>
-        {{end}}
-        {{end}}
-    </main>
+        <div class="overlay-panel overlay-right">
+          <h1>Hello, Friend!</h1>
+          <p>Enter your details and start your journey with us.</p>
+          <button class="ghost" id="signUp">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <script src="/static/scripts/main.js"></script>
-
-
+  <script src="/static/scripts/main.js" defer></script>
 </body>
-
 </html>
