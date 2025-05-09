@@ -70,6 +70,25 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 
 	tmpl.Execute(w, nil)
 }
+func CheckSession(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("session_token")
+	if err != nil {
+		w.Write([]byte(`{"loggedIn": false}`))
+		return
+	}
+
+	var userID int
+	query := `SELECT user_id FROM sessions WHERE session_token = ? AND expires_at > DATETIME('now')`
+	err = databases.DB.QueryRow(query, cookie.Value).Scan(&userID)
+	if err != nil {
+		w.Write([]byte(`{"loggedIn": false}`))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write([]byte(`{"loggedIn": true}`))
+}
+
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	err1 := r.ParseForm()

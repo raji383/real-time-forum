@@ -4,65 +4,62 @@ document.addEventListener('DOMContentLoaded', () => {
   const signInButton = document.getElementById('signIn');
   const loginForm = document.getElementById('loginForm');
   const mainPage = document.getElementById('mainPage');
+  const logoutBtn = document.getElementById('logoutBtn');
 
-  // Display signup form
+  // Check session on load
+  fetch('/check-session')
+  .then(res => res.json())
+  .then(data => {
+    if (data.loggedIn) {
+      container.style.display = 'none';
+      mainPage.style.display = 'block';
+    } else {
+      container.style.display = 'block';
+      mainPage.style.display = 'none';
+    }
+  });
+
+
   signUpButton.addEventListener('click', () => {
     container.classList.add('right-panel-active');
-    loginForm.style.display = 'none'; // Hide login form when sign up
+    loginForm.style.display = 'none';
   });
 
-  // Display login form
   signInButton.addEventListener('click', () => {
     container.classList.remove('right-panel-active');
-    loginForm.style.display = 'block'; // Show login form when sign in
+    loginForm.style.display = 'block';
   });
 
-  async function handleLoginSubmit(e) {
+  loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-  
+
     const formData = new FormData(loginForm);
-    const urlEncodedData = new URLSearchParams();
-  
-    // تحويل FormData إلى URLSearchParams
-    for (let pair of formData.entries()) {
-      urlEncodedData.append(pair[0], pair[1]);
-    }
-  
+    const urlEncodedData = new URLSearchParams(formData);
+
     try {
       const response = await fetch('/login', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',  
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: urlEncodedData.toString(),  
+        body: urlEncodedData.toString(),
       });
-  
-      if (response.ok) {
-        const result = await response.json();
-  
-        if (result.success) {
-          container.style.display = 'none';
-          mainPage.style.display = 'block';
-  
-          mainPage.innerHTML = `
-            <h1>Welcome!</h1>
-            <p>${result.message}</p>
-            ${result.nickname ? `<p>Nickname: ${result.nickname}</p>` : ""}
-          `;
-        } else {
-          alert("Login failed: " + result.message);
-        }
+
+      const result = await response.json();
+      if (result.success) {
+        container.style.display = 'none';
+        mainPage.style.display = 'block';
       } else {
-        const errorText = await response.text();
-        alert("Error: " + errorText);
+        alert("Login failed: " + result.message);
       }
-    } catch (error) {
-      console.error("Login error:", error);
-      alert("Something went wrong. Please try again.");
+    } catch (err) {
+      alert("Something went wrong.");
     }
-  }
-  
-  loginForm.addEventListener('submit', handleLoginSubmit);
-  
-  
+  });
+
+  logoutBtn?.addEventListener('click', async () => {
+    await fetch('/logout', { method: 'POST' });
+    container.style.display = 'block';
+    mainPage.style.display = 'none';
+  });
 });
