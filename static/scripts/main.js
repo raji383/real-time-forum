@@ -2,45 +2,67 @@ document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('container');
   const signUpButton = document.getElementById('signUp');
   const signInButton = document.getElementById('signIn');
-  const signupForm = document.getElementById('loginForm')
-  const sign = document.getElementById('sing');
+  const loginForm = document.getElementById('loginForm');
   const mainPage = document.getElementById('mainPage');
 
-
+  // Display signup form
   signUpButton.addEventListener('click', () => {
     container.classList.add('right-panel-active');
-    signupForm.style.display='none'
-
+    loginForm.style.display = 'none'; // Hide login form when sign up
   });
 
+  // Display login form
   signInButton.addEventListener('click', () => {
     container.classList.remove('right-panel-active');
-    signupForm.style.display='block'
+    loginForm.style.display = 'block'; // Show login form when sign in
   });
-  loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault(); 
 
+  async function handleLoginSubmit(e) {
+    e.preventDefault();
+  
     const formData = new FormData(loginForm);
-
-    const response = await fetch('/', {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (response.ok) {
-      const result = await response.json();
-
-      if (result.success) {
-        console.log(result);
-        container.style.display = 'none';
-        mainPage.style.display = 'block';
-      } else {
-        alert("Login failed: " + result.message);
-      }
-    } else {
-      const errorText = await response.text();
-      alert("Error: " + errorText);
+    const urlEncodedData = new URLSearchParams();
+  
+    // تحويل FormData إلى URLSearchParams
+    for (let pair of formData.entries()) {
+      urlEncodedData.append(pair[0], pair[1]);
     }
-  });
-    
+  
+    try {
+      const response = await fetch('/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',  
+        },
+        body: urlEncodedData.toString(),  
+      });
+  
+      if (response.ok) {
+        const result = await response.json();
+  
+        if (result.success) {
+          container.style.display = 'none';
+          mainPage.style.display = 'block';
+  
+          mainPage.innerHTML = `
+            <h1>Welcome!</h1>
+            <p>${result.message}</p>
+            ${result.nickname ? `<p>Nickname: ${result.nickname}</p>` : ""}
+          `;
+        } else {
+          alert("Login failed: " + result.message);
+        }
+      } else {
+        const errorText = await response.text();
+        alert("Error: " + errorText);
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Something went wrong. Please try again.");
+    }
+  }
+  
+  loginForm.addEventListener('submit', handleLoginSubmit);
+  
+  
 });

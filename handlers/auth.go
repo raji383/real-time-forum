@@ -72,9 +72,14 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+	err1 := r.ParseForm()
+	if err1 != nil {
+		http.Error(w, "Error parsing form", http.StatusBadRequest)
+		return
+	}
 	nickname := r.FormValue("user")
 	password := r.FormValue("password")
+	fmt.Println("nickname", nickname, "password", password)
 
 	query := `SELECT password FROM users WHERE nickname = ?`
 
@@ -82,8 +87,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	err := databases.DB.QueryRow(query, nickname).Scan(&hashedPassword)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			fmt.Println(err)
-			http.Error(w, "User not found", http.StatusNotFound)
+			
+			http.Error(w, "User not found1", http.StatusNotFound)
 			return
 		}
 		http.Error(w, "Database error", http.StatusInternalServerError)
@@ -106,10 +111,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	})
 
 	 SetSessionToken(user_id, session)
+	 
 
 	 w.Header().Set("Content-Type", "application/json")
 	 w.WriteHeader(http.StatusOK)
 	 w.Write([]byte(`{"success": true, "message": "Login successful"}`))
+	 
 }
 
 func SetSessionToken(id int, token string) {

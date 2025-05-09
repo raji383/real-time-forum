@@ -16,8 +16,8 @@ func SetupRoutes() *mux.Router {
     r.HandleFunc("/", handlers.HomeHandler)
   
     // Auth
-    r.HandleFunc("/login", handlers.Login).Methods("POST")
-    r.HandleFunc("/Signup", handlers.Signup).Methods("POST")
+    r.HandleFunc("/login", handlers.Login)
+    r.HandleFunc("/Signup", handlers.Signup)
     r.HandleFunc("/logout", handlers.Logout)
 
     return r
