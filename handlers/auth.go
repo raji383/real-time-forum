@@ -98,7 +98,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	nickname := r.FormValue("user")
 	password := r.FormValue("password")
-	fmt.Println("nickname", nickname, "password", password)
 
 	query := `SELECT password FROM users WHERE nickname = ?`
 
