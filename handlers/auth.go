@@ -107,7 +107,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	 SetSessionToken(user_id, session)
 
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	 w.Header().Set("Content-Type", "application/json")
+	 w.WriteHeader(http.StatusOK)
+	 w.Write([]byte(`{"success": true, "message": "Login successful"}`))
 }
 
 func SetSessionToken(id int, token string) {
