@@ -8,7 +8,7 @@
   <title>Forum</title>
 </head>
 <body>
-  <div class="container" id="container" style="display: none;">
+  <div class="container" id="container">
     <!-- Sign Up Form -->
     <div class="form-container sign-up-container">
       <form id="signupForm" action="/Signup" method="post">
@@ -37,8 +37,8 @@
         <input type="text"     placeholder="Nickname or Email" name="user"       required />
         <input type="password" placeholder="Password"          name="password"   required />
        
-        <button type="submit">Sign In</button>
-      </form>
+        <button class="but" id="sing">Sign Up</button>
+    </form>
     </div>
 
     <!-- Overlay Panels -->
@@ -59,130 +59,16 @@
       ￼SIGN IN
     </div>
   </div>
+
+
+<div id="mainPage" style="display: none;">
+    <h1>Welcome to the Forum!</h1>
+  </div>
   
-  <header class="nav">
-    <div class="forum"><a href="/">FORUM</a>
-                                         </div>
-    <div class="profile">
-        {{if .Authenticated}}
+  
+  
 
-        
-            <a href="/profile">{{.Username}}</a>
-            <a href="/logout">Logout</a>
-        {{else}}
-            <a href="/profile">Guest</a>
-            <a href="/login">Login</a>
-            <a href="/register">Sign Up</a>
-        {{end}}
-    </div>
-</header>
-<div class="post-container">
-    <form action="/post" method="post">
-        <button type="submit">Create Post</button>
-    </form>
-</div>
 
-<div class="interests">
-    <h3>GAtegory:</h3>
-    <form action="/filter" method="get">
-        <div class="interest-buttons">
-            <button type="submit" name="interest" value="Sports" class="interest-btn">Sports ⚽</button>
-            <button type="submit" name="interest" value="Food" class="interest-btn">Food 🍴</button>
-            <button type="submit" name="interest" value="Music" class="interest-btn">Music 🎶</button>
-            <button type="submit" name="interest" value="Culture" class="interest-btn">Culture 🕌</button>
-            <button type="submit" name="interest" value="Programation" class="interest-btn">Programming 🖥️​​</button>
-        </div>
-    </form>
-</div>
-
-<main>
-    {{if .Posts}}
-        {{range .Posts}}
-            <div class="post">
-                <p> title: {{.Post.Title}}</p>
-                <p>{{.Post.Username}}: {{.Post.Content}} </p>
-                 {{if .Post.Interest}}
-                 <p>({{.Post.Interest}})</p>
-                 {{end}}
-                     {{if ne .Post.Photo ""}}
-                 <img src="{{.Post.Photo}}" alt="Post Photo" >
-                  {{end}}
-                
-                <strong>{{.Post.MinutesSinceCreation}}</strong>
-
-                <div class="reactions">
-                    <form action="/reaction" method="post" class="reaction-form">
-                        <input type="hidden" name="target_type" value="post">
-                        <input type="hidden" name="target_id" value="{{.Post.PostID}}">
-                        <button type="submit" name="type" value="like" class="reaction-btn {{if eq .Post.UserReaction "like"}}active{{end}}">
-                            <i class="fas fa-thumbs-up"></i>
-                            <span>{{.Post.Likes}}</span>
-                        </button>
-                        <button type="submit" name="type" value="dislike" class="reaction-btn {{if eq .Post.UserReaction "dislike"}}active{{end}}">
-                            <i class="fas fa-thumbs-down"></i>
-                            <span>{{.Post.Dislikes}}</span>
-                        </button>
-                    </form>
-                </div>
-
-                <form action="/comment" method="post" onsubmit="return validateComment(this);">
-                    <input type="hidden" name="post_id" value="{{.Post.PostID}}">
-                    <input type="text" name="content" placeholder="Write a comment" required>
-                    <button type="submit">Comment</button>
-                </form>
-
-                <div class="comments">
-                    <button class="show-comments-btn" onclick="toggleComments(this, '{{.Post.PostID}}')">
-                        {{if .Comments}}View all {{len .Comments}} comments{{else}}No comments yet{{end}}
-                    </button>
-                    <div class="comments-list" id="comments-{{.Post.PostID}}" style="display: none;">
-                        {{range .Comments}}
-                            <div class="comment">
-                                <p>{{.Username}}: {{.Content}}</p>
-                                <p>{{.MinutesSinceCreation}} </p>
-                                <div class="reactions">
-                                    <form action="/reaction" method="post" class="reaction-form">
-                                        <input type="hidden" name="target_type" value="comment">
-                                        <input type="hidden" name="target_id" value="{{.ID}}">
-                                        <button type="submit" name="type" value="like" class="reaction-btn {{if eq .UserReaction "like"}}active{{end}}">
-                                            <i class="fas fa-thumbs-up"></i>
-                                            <span>{{.LikeCount}}</span>
-                                        </button>
-                                        <button type="submit" name="type" value="dislike" class="reaction-btn {{if eq .UserReaction "dislike"}}active{{end}}">
-                                            <i class="fas fa-thumbs-down"></i>
-                                            <span>{{.DislikeCount}}</span>
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        {{else}}
-                            <p class="no-comments">No comments yet.</p>
-                        {{end}}
-                    </div>
-                </div>
-            </div>
-        {{end}}
-    {{else}}
-        <p>No posts found.</p>
-    {{end}}
-</main>
-<script>
-  function validateComment(form) {
-      const content = form.content.value.trim();
-      if (content === '') {
-          window.alert('Comment cannot be empty');
-          return false;
-      }
-      return true;
-  }
-
-  function toggleComments(button, postId) {
-      const commentsList = document.getElementById(`comments-${postId}`);
-      const isHidden = commentsList.style.display === 'none' || commentsList.style.display === '';
-      commentsList.style.display = isHidden ? 'block' : 'none';
-      button.textContent = isHidden ? 'Hide comments' : `View all ${commentsList.querySelectorAll('.comment').length} comments`;
-  }
-</script>
    
 
 

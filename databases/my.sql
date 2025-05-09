@@ -8,3 +8,4 @@ CREATE TABLE users (
     email TEXT UNIQUE,
     password TEXT
 );
+No posts found
