@@ -1,77 +1,20 @@
 package handlers
 
 import (
+	"crypto/rand"
 	"database/sql"
+	"encoding/base64"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+	"time"
+
+	"real-time-forum/databases"
 
 	_ "github.com/mattn/go-sqlite3"
 	"golang.org/x/crypto/bcrypt"
 )
-
-var db *sql.DB
-
-func init() {
-	var err error
-	db, err = sql.Open("sqlite3", "./databases/forum.db")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	creat := `CREATE TABLE IF NOT EXISTS users (
-    	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	    nickname TEXT NOT NULL,
-    	age INTEGER,
-	    gender TEXT,
-    	first_name TEXT,
-    	last_name TEXT,
-    	email TEXT UNIQUE,
-    	password TEXT
-	);
-`
-	db.Exec(creat)
-}
-
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles("template/index.html")
-	if err != nil {
-		http.Error(w, "Template error", http.StatusInternalServerError)
-		return
-	}
-
-	tmpl.Execute(w, nil)
-}
-
-func Login(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	nickname := r.FormValue("user")
-	password := r.FormValue("password")
-	
-
-	query := `SELECT password FROM users WHERE nickname = ?`
-
-	var hashedPassword string
-	err := db.QueryRow(query, nickname).Scan(&hashedPassword)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			fmt.Println(err)
-			http.Error(w, "User not found", http.StatusNotFound)
-			return
-		}
-		http.Error(w, "Database error", http.StatusInternalServerError)
-		return
-	}
-
-	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
-	if err != nil {
-		http.Error(w, "Incorrect password", http.StatusUnauthorized)
-		return
-	}
-
-	http.Redirect(w, r, "/", http.StatusSeeOther)
-}
 
 func Signup(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
@@ -102,7 +45,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// INSERT
-	_, err = db.Exec(`
+	_, err = databases.DB.Exec(`
         INSERT INTO users (nickname, age, gender, first_name, last_name, email, password)
         VALUES (?, ?, ?, ?, ?, ?, ?)`,
 		username, age, gender, firstName, lastName, email, hashedPassword)
@@ -114,7 +57,93 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
-
 func Logout(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
+
+func HomeHandler(w http.ResponseWriter, r *http.Request) {
+	tmpl, err := template.ParseFiles("template/index.html")
+	if err != nil {
+		http.Error(w, "Template error", http.StatusInternalServerError)
+		return
+	}
+
+	tmpl.Execute(w, nil)
+}
+
+func Login(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	nickname := r.FormValue("user")
+	password := r.FormValue("password")
+
+	query := `SELECT password FROM users WHERE nickname = ?`
+
+	var hashedPassword string
+	err := databases.DB.QueryRow(query, nickname).Scan(&hashedPassword)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			fmt.Println(err)
+			http.Error(w, "User not found", http.StatusNotFound)
+			return
+		}
+		http.Error(w, "Database error", http.StatusInternalServerError)
+		return
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+	if err != nil {
+		http.Error(w, "Incorrect password", http.StatusUnauthorized)
+		return
+	}
+	user_id,_ := GetUserHash(nickname)
+	session := GenerateToken(32) // TODO: UUID bonus csrf implementation genrate csrf read it in front end js and match it with server go
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_token",
+		Value:    session,
+		Expires:  time.Now().Add(time.Hour * 1),
+		HttpOnly: true,
+	})
+
+	 SetSessionToken(user_id, session)
+
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func SetSessionToken(id int, token string) {
+	update_query := `UPDATE sessions SET expires_at = DATETIME('now', '+1 hour') , session_token = ? WHERE user_id = ?`
+	insert_query := `INSERT INTO sessions (user_id,session_token,expires_at) VALUES (? , ? , DATETIME('now','+1 hour'))`
+	res, err := databases.DB.Exec(update_query, token, id)
+	if err != nil {
+		log.Println(err)
+	}
+	if count, _ := res.RowsAffected(); count > 0 {
+		return
+	}
+	_, err = databases.DB.Exec(insert_query, id, token)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+func GetUserHash(username string) (int, string) {
+	var hash string
+	var id int
+	query := `SELECT id,password_hash FROM users WHERE username = ? OR email = ?`
+	err := databases.DB.QueryRow(query, username, username).Scan(&id, &hash)
+	if err != nil {
+		log.Println(err)
+	}
+	return id, hash
+}
+
+func GenerateToken(length int) string {
+	bytes := make([]byte, length)
+	if _, err := rand.Read(bytes); err != nil {
+		log.Fatalf("failed to generat token %v", err)
+	}
+	return base64.URLEncoding.EncodeToString(bytes)
+}
+
+
+

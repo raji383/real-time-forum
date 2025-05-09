@@ -14,7 +14,7 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   min-height: 100vh;
-  display: flex;
+
   align-items: center;
   justify-content: center;
 }
@@ -184,4 +184,342 @@ button.ghost {
 
 button.ghost:hover {
   background-color: rgba(255, 255, 255, 0.15);
+}
+/* /static/css/index.css */
+
+
+
+
+/* Navigation Header */
+.nav {
+  background: rgba(255, 255, 255, 0.08); /* Translucent glass effect */
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: none;
+  padding: 10px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+.forum a{
+  position: absolute;
+  bottom: 50%;
+  transform: translateY(50%);
+  text-decoration: none;
+  color: rgb(240, 238, 238);
+  left: 10px;
+  font-size: 20px;
+  font-weight: 600;
+  transition: color 0.2s ease;
+  
+
+  
+
+}
+.forum a:hover{
+  color: #00ff9d;
+}
+
+.profile a {
+  text-decoration: none;
+  color: #e0e0e0;
+  font-weight: 600;
+  margin-left: 15px;
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.profile a:hover {
+  color: #00ff9d;
+}
+
+/* Main Content */
+main {
+  max-width: 935px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+.post {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  margin: 0 auto 24px auto;
+  padding: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  text-align: left;
+  max-width: 500px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.post:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.3);
+}
+
+.post p {
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: #e6e6e6;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 12px 16px;
+  border-radius: 10px;
+}
+
+.post img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-top: 16px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s ease;
+}
+
+.post img:hover {
+  transform: scale(1.02);
+}
+
+
+
+
+
+
+
+.post p em {
+  color: #cccccc; /* Lighter muted text */
+  font-size: 12px;
+}
+
+
+/* Reactions */
+.reactions {
+  display: flex;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.reaction-form {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.reaction-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #cccccc;
+  font-size: 14px;
+  transition: color 0.2s ease, transform 0.1s ease;
+}
+
+.reaction-btn i {
+  font-size: 16px;
+}
+
+.reaction-btn:hover {
+  color: #e0e0e0;
+  transform: scale(1.15);
+}
+
+.reaction-btn.active {
+  color: #00ff9d; /* Vibrant green from second CSS */
+  font-weight: 600;
+}
+
+/* Comment Form */
+form[action="/comment"] {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+form[action="/comment"] input[type="text"] {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05); /* Translucent input */
+  color: #e0e0e0;
+  font-size: 14px;
+  outline: none;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+form[action="/comment"] input[type="text"]::placeholder {
+  color: #cccccc;
+}
+
+form[action="/comment"] input[type="text"]:focus {
+  background: rgba(0, 200, 255, 0.1);
+  box-shadow: 0 0 6px rgba(0, 255, 200, 0.5);
+}
+
+form[action="/comment"] button {
+  background: linear-gradient(90deg, #00ff9d, #00d4ff); /* Gradient button */
+  color: #1a1a2e;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+form[action="/comment"] button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 255, 163, 0.5);
+}
+
+/* Comments Section */
+.comments {
+  margin-top: 12px;
+}
+
+.show-comments-btn {
+  background: none;
+  border: none;
+  color: #cccccc;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 0;
+  text-align: left;
+  transition: color 0.2s ease;
+}
+
+.show-comments-btn:hover {
+  color: #00d4ff;
+}
+
+
+.comments-list[style*="display: block"] {
+  opacity: 1;
+}
+
+.comments-list[style*="display: none"] {
+  opacity: 0;
+}
+
+.comment {
+  margin-bottom: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03); /* Subtle glass effect for comments */
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.comment p {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.comment p strong {
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
+.comment p em {
+  font-size: 12px;
+  color: #cccccc;
+}
+
+.no-comments {
+  color: #cccccc;
+  font-size: 14px;
+  text-align: center;
+  padding: 8px 0;
+}
+
+/* No Posts Fallback */
+main p {
+  text-align: center;
+  color: #cccccc;
+  font-size: 16px;
+  padding: 20px;
+}
+
+/* Post Button Container */
+.post-container {
+  max-width: 935px;
+  margin: 30px;
+  padding: 0 20px;
+}
+
+.post-container form button {
+  background: linear-gradient(90deg, #00ff9d, #00d4ff);
+  color: #1a1a2e;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.post-container form button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 255, 163, 0.5);
+}
+
+/* Styles for interest buttons */
+.interests {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.interest-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.interest-btn {
+  padding: 10px 15px;
+  font-size: 14px;
+  background-color: #007BFF;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.interest-btn:hover {
+  background-color: #0056b3;
+}
+/* Responsive Design */
+@media (max-width: 768px) {
+  @media (max-width: 768px) {
+      form[action="/comment"] {
+          gap: 5px;
+      }
+  
+      form[action="/comment"] input[type="text"] {
+          font-size: 15px;
+          padding: 5px 5px;
+      }
+  
+      form[action="/comment"] button {
+          font-size: 15px;
+          padding: 5px 5px;
+      }
+  }
 }
