@@ -15,7 +15,6 @@ body {
   background-repeat: no-repeat;
   min-height: 100vh;
   display: flex;
-
   align-items: center;
   justify-content: center;
 }
@@ -512,6 +511,34 @@ main p {
 .interest-btn:hover {
   background-color: #0056b3;
 }
+#navigateur {
+  padding: 10px 20px; /* Space around the content */
+  display: flex; /* Use flexbox for positioning */
+  justify-content: flex-end; /* Align the button to the left */
+  align-items: center; /* Center vertically if necessary */
+  border-radius: 5px;
+}
+
+#logoutButton {
+  background-color: #ff4d4d; /* Red background */
+  color: white; /* White text */
+  padding: 10px 20px; /* Padding for button */
+  border: none; /* No border */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer on hover */
+  font-size: 16px; /* Font size */
+  transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+#logoutButton:hover {
+  background-color: #e60000; /* Darker red on hover */
+}
+
+#logout {
+  margin: 0;
+}
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
   @media (max-width: 768px) {

@@ -4,22 +4,44 @@ document.addEventListener('DOMContentLoaded', () => {
   const signInButton = document.getElementById('signIn');
   const loginForm = document.getElementById('loginForm');
   const mainPage = document.getElementById('mainPage');
-  const logoutBtn = document.getElementById('logoutBtn');
+  const logoutBtn = document.getElementById('logout');
+  const usernameDisplay = document.getElementById('username'); // Where we display the username
 
   // Check session on load
   fetch('/check-session')
-  .then(res => res.json())
-  .then(data => {
-    if (data.loggedIn) {
-      container.style.display = 'none';
-      mainPage.style.display = 'block';
-    } else {
-      container.style.display = 'block';
-      mainPage.style.display = 'none';
+    .then(res => res.json())
+    .then(data => {
+      if (data.loggedIn) {
+        container.style.display = 'none';
+        mainPage.style.display = 'block';
+        document.body.style.display = 'block';
+        usernameDisplay.textContent = `Welcome, ${data.username}!`; // Dynamic username
+      } else {
+        container.style.display = 'block';
+        mainPage.style.display = 'none';
+        document.body.style.display = 'flex';
+      }
+    });
+
+  // Logout functionality
+  logoutBtn.addEventListener('click', async () => {
+    try {
+      const response = await fetch('/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        console.error('Logout failed');
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
     }
   });
 
-
+  // Toggle between Sign Up and Sign In forms
   signUpButton.addEventListener('click', () => {
     container.classList.add('right-panel-active');
     loginForm.style.display = 'none';
@@ -30,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loginForm.style.display = 'block';
   });
 
+  // Handle login form submission
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -39,27 +62,18 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const response = await fetch('/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: urlEncodedData.toString(),
       });
 
       const result = await response.json();
       if (result.success) {
-        container.style.display = 'none';
-        mainPage.style.display = 'block';
+        window.location.reload();
       } else {
         alert("Login failed: " + result.message);
       }
     } catch (err) {
       alert("Something went wrong.");
     }
-  });
-
-  logoutBtn?.addEventListener('click', async () => {
-    await fetch('/logout', { method: 'POST' });
-    container.style.display = 'block';
-    mainPage.style.display = 'none';
   });
 });
