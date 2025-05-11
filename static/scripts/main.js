@@ -15,7 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
         container.style.display = 'none';
         mainPage.style.display = 'block';
         document.body.style.display = 'block';
-        usernameDisplay.textContent = `Welcome, ${data.username}!`; // Dynamic username
+        usernameDisplay.textContent = `Welcome, ${data.username}!`; 
+        
       } else {
         container.style.display = 'block';
         mainPage.style.display = 'none';

@@ -512,11 +512,14 @@ main p {
   background-color: #0056b3;
 }
 #navigateur {
-  padding: 10px 20px; /* Space around the content */
-  display: flex; /* Use flexbox for positioning */
-  justify-content: flex-end; /* Align the button to the left */
-  align-items: center; /* Center vertically if necessary */
-  border-radius: 5px;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between; /* أو flex-end حسب المطلوب */
+  align-items: center;
+  border-radius: 10px;
+
+  background-color: transparent;
+  backdrop-filter: blur(10px);
 }
 
 #logoutButton {
@@ -524,7 +527,7 @@ main p {
   color: white; /* White text */
   padding: 10px 20px; /* Padding for button */
   border: none; /* No border */
-  border-radius: 5px; /* Rounded corners */
+  border-radius: 30px; /* Rounded corners */
   cursor: pointer; /* Pointer on hover */
   font-size: 16px; /* Font size */
   transition: background-color 0.3s ease; /* Smooth transition */
