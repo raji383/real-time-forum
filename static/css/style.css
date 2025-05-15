@@ -13,20 +13,20 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+ 
 }
 
 
-  #container {
-    display: none;
-  }
+#container {
+  display: none;
+
+
+}
 
 
 /* Container */
 .container {
+  
   background: rgba(255, 255, 255, 0.95);
   border-radius: 15px;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
@@ -125,6 +125,17 @@ form h1 {
 .container.right-panel-active .overlay {
   transform: translateX(50%);
 }
+.container.left-panel-active .overlay-container {
+  transform: translateX(-100%);
+}mainPage
+.overlay-container{
+  background-color: red
+}
+
+.container.left-panel-active .overlay {
+  transform: translateX(50%);
+}
+
 
 /* Overlay Panels */
 .overlay-panel {
@@ -140,9 +151,13 @@ form h1 {
   transition: transform 0.6s ease-in-out;
   padding: 0 40px;
 }
-
+#mainPage{
+  display: flex;
+  justify-content: space-between;
+}
 .overlay-left {
-  transform: translateX(-20%);
+
+  transform: translateX(0);
   left: 0;
 }
 
@@ -191,6 +206,7 @@ button.ghost {
 button.ghost:hover {
   background-color: rgba(255, 255, 255, 0.15);
 }
+
 /* /static/css/index.css */
 
 
@@ -198,7 +214,8 @@ button.ghost:hover {
 
 /* Navigation Header */
 .nav {
-  background: rgba(255, 255, 255, 0.08); /* Translucent glass effect */
+  background: rgba(255, 255, 255, 0.08);
+  /* Translucent glass effect */
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-bottom: none;
@@ -211,7 +228,8 @@ button.ghost:hover {
   align-items: center;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
-.forum a{
+
+.forum a {
   position: absolute;
   bottom: 50%;
   transform: translateY(50%);
@@ -221,12 +239,13 @@ button.ghost:hover {
   font-size: 20px;
   font-weight: 600;
   transition: color 0.2s ease;
-  
 
-  
+
+
 
 }
-.forum a:hover{
+
+.forum a:hover {
   color: #00ff9d;
 }
 
@@ -302,7 +321,8 @@ main {
 
 
 .post p em {
-  color: #cccccc; /* Lighter muted text */
+  color: #cccccc;
+  /* Lighter muted text */
   font-size: 12px;
 }
 
@@ -341,7 +361,8 @@ main {
 }
 
 .reaction-btn.active {
-  color: #00ff9d; /* Vibrant green from second CSS */
+  color: #00ff9d;
+  /* Vibrant green from second CSS */
   font-weight: 600;
 }
 
@@ -359,7 +380,8 @@ form[action="/comment"] input[type="text"] {
   padding: 10px 16px;
   border: none;
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.05); /* Translucent input */
+  background: rgba(255, 255, 255, 0.05);
+  /* Translucent input */
   color: #e0e0e0;
   font-size: 14px;
   outline: none;
@@ -376,7 +398,8 @@ form[action="/comment"] input[type="text"]:focus {
 }
 
 form[action="/comment"] button {
-  background: linear-gradient(90deg, #00ff9d, #00d4ff); /* Gradient button */
+  background: linear-gradient(90deg, #00ff9d, #00d4ff);
+  /* Gradient button */
   color: #1a1a2e;
   border: none;
   padding: 8px 16px;
@@ -426,7 +449,8 @@ form[action="/comment"] button:hover {
   margin-bottom: 12px;
   padding: 8px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.03); /* Subtle glass effect for comments */
+  background: rgba(255, 255, 255, 0.03);
+  /* Subtle glass effect for comments */
   border-radius: 8px;
   padding: 8px 12px;
 }
@@ -511,10 +535,12 @@ main p {
 .interest-btn:hover {
   background-color: #0056b3;
 }
+
 #navigateur {
   padding: 10px 20px;
   display: flex;
-  justify-content: space-between; /* أو flex-end حسب المطلوب */
+  justify-content: space-between;
+  /* أو flex-end حسب المطلوب */
   align-items: center;
   border-radius: 10px;
   background-color: transparent;
@@ -522,18 +548,27 @@ main p {
 }
 
 #logoutButton {
-  background-color: #ff4d4d; /* Red background */
-  color: white; /* White text */
-  padding: 10px 20px; /* Padding for button */
-  border: none; /* No border */
-  border-radius: 30px; /* Rounded corners */
-  cursor: pointer; /* Pointer on hover */
-  font-size: 16px; /* Font size */
-  transition: background-color 0.3s ease; /* Smooth transition */
+  background-color: #ff4d4d;
+  /* Red background */
+  color: white;
+  /* White text */
+  padding: 10px 20px;
+  /* Padding for button */
+  border: none;
+  /* No border */
+  border-radius: 30px;
+  /* Rounded corners */
+  cursor: pointer;
+  /* Pointer on hover */
+  font-size: 16px;
+  /* Font size */
+  transition: background-color 0.3s ease;
+  /* Smooth transition */
 }
 
 #logoutButton:hover {
-  background-color: #e60000; /* Darker red on hover */
+  background-color: #e60000;
+  /* Darker red on hover */
 }
 
 #logout {
@@ -545,18 +580,18 @@ main p {
 /* Responsive Design */
 @media (max-width: 768px) {
   @media (max-width: 768px) {
-      form[action="/comment"] {
-          gap: 5px;
-      }
-  
-      form[action="/comment"] input[type="text"] {
-          font-size: 15px;
-          padding: 5px 5px;
-      }
-  
-      form[action="/comment"] button {
-          font-size: 15px;
-          padding: 5px 5px;
-      }
+    form[action="/comment"] {
+      gap: 5px;
+    }
+
+    form[action="/comment"] input[type="text"] {
+      font-size: 15px;
+      padding: 5px 5px;
+    }
+
+    form[action="/comment"] button {
+      font-size: 15px;
+      padding: 5px 5px;
+    }
   }
 }
