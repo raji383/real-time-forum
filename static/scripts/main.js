@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         body.style.display = 'flex';
         body.style.alignItems = 'center';
         body.style.justifyContent = 'center';
-        body.style.height='100vh'
+        body.style.height = '100vh'
 
       }
     });
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       if (response.ok) {
-      window.history.pushState({ action: 'logout' }, 'Logged Out', '/logout');
+        window.history.pushState({ action: 'logout' }, 'Logged Out', '/logout');
         window.location.reload();
       } else {
         console.error('Logout failed');
@@ -139,3 +139,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+document.getElementById('form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+ 
+  const titleEl       = document.getElementById('title');
+  const descEl        = document.getElementById('description');
+  const topicCheckbox = document.querySelectorAll('input[name="topic"]:checked');
+
+
+  const title       = titleEl.value;
+  const description = descEl.value;
+  const topics      = Array.from(topicCheckbox).map(cb => cb.value);
+
+  try {
+    const response = await fetch('/posts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, description, topics })
+    });
+
+    if (!response.ok) {
+      console.error('Server returned status', response.status);
+      return;
+    }
+
+    const payload = await response.json();
+    console.log('Server response:', payload.message);
+    document.getElementById('errorMsg').style.display = 'none';
+
+  } catch (err) {
+    console.error('Error sending form:', err);
+    const errEl = document.getElementById('errorMsg');
+    errEl.textContent = 'An error occurred. Please try again.';
+    errEl.style.display = 'block';
+  }
+});
+
+
+
+

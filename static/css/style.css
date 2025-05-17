@@ -177,7 +177,7 @@ form h1 {
 }
 
 /* Buttons */
-button {
+button ,#Create1{
   border-radius: 30px;
   border: none;
   background: #ff4b2b;
@@ -214,6 +214,7 @@ button.ghost:hover {
 
 /* Navigation Header */
 .nav {
+  margin: 20px;
   background: rgba(255, 255, 255, 0.08);
   /* Translucent glass effect */
   backdrop-filter: blur(12px);
@@ -537,6 +538,7 @@ main p {
 }
 
 #navigateur {
+  margin: 0 0 20px 0;
   padding: 10px 20px;
   display: flex;
   justify-content: space-between;

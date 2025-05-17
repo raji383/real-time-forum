@@ -131,7 +131,7 @@ func CheckSession(w http.ResponseWriter, r *http.Request) {
 
 	// Get user info
 	username := GetUserInfo(userID)
-	fmt.Println(username, "jjjjj")
+	
 	w.Header().Set("Content-Type", "application/json")
 	w.Write([]byte(fmt.Sprintf(`{"loggedIn": true, "username": "%s"}`, username.Username)))
 }

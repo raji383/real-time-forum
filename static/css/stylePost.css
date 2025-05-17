@@ -1,0 +1,118 @@
+/* Section wrapper */
+section {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    animation: 0.5s animt ease-in-out;
+    width: 50vw;
+    height: 50vh;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Form container */
+.container {
+
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 30px 40px;
+    max-width: 500px;
+    width: 100%;
+}
+
+/* Heading */
+.container h3 {
+    margin-bottom: 20px;
+    font-size: 1.6rem;
+    text-align: center;
+    color: #333;
+}
+
+/* Labels and inputs */
+.container label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #555;
+}
+
+.container input[type="text"],
+.container textarea {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 18px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    resize: none;
+    transition: border-color 0.2s;
+}
+
+.container input[type="text"]:focus,
+.container textarea:focus {
+    outline: none;
+    border-color: #007BFF;
+}
+
+/* Topic checkboxes */
+.topic-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.topic-options label {
+    font-weight: 400;
+    color: #444;
+    cursor: pointer;
+}
+
+.topic-options input[type="checkbox"] {
+    margin-right: 6px;
+    transform: scale(1.1);
+}
+
+/* Error message */
+#errorMsg {
+    font-size: 0.9rem;
+}
+
+/* Submit button */
+.container button[type="submit"] {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.container button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+body:has(#Create:checked) section {
+  display: flex;
+}
+
+@keyframes animt {
+    0% {
+        opacity: 0;
+        top: -10%;
+        transform: translate(-50%, 0);
+    }
+
+    100% {
+        opacity: 1;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
