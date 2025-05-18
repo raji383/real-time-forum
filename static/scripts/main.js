@@ -194,12 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
      console.log('Title:', payload.title);
       console.log('Description:', payload.content);
       console.log('Topics:', payload.interest);
-      const post = document.getElementById('Post');
-      post.innerHTML = `
-        <h2>${payload.title}</h2>
-        <p>${payload.content}</p>
-        <p>Topics: ${payload.interest}</p>
-      `;
+      
       document.getElementById('errorMsg').style.display = 'none';
       await loadPosts(); // Reload posts after successful creation
     } catch (err) {
