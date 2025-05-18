@@ -1,7 +1,29 @@
 document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('container');
-
-
+  const section = document.querySelector('section');
+  section.innerHTML = `<form id="form"  method="get">
+                <div class="container">
+                    <h3>Create Post</h3>
+                    <div class="div-title">
+                        <label for="title">Title :</label>
+                        <input type="text" name="title" id="title" required>
+                    </div>
+                    <div class="div-description">
+                        <label for="description">description :</label>
+                        <textarea name="description" id="description" rows="4"  required></textarea>
+                    </div>
+                    <div class="topic-options">
+                        <label><input type="checkbox" id="music" name="topic" value="Music"> Music</label>
+                        <label><input type="checkbox" id="sport" name="topic" value="Sport"> Sport</label>
+                        <label><input type="checkbox" id="gaming" name="topic" value="Gaming"> Gaming</label>
+                        <label><input type="checkbox" id="health" name="topic" value="Health"> Health</label>
+                        <label><input type="checkbox" id="general" name="topic" value="General"> General</label>
+                    </div>
+                    <div id="errorMsg" style="display:none; color:red; margin: 10px 10px;"></div>
+                    <button type="submit">Post</button>
+                </div>
+            </form>`
+;
   // Dynamically add sign-up and sign-in forms
   container.innerHTML = `
     
@@ -82,6 +104,8 @@ document.addEventListener('DOMContentLoaded', () => {
         mainPage.style.display = 'block';
         usernameDisplay.textContent = `Welcome, ${data.username}!`;
         container.style.display = 'none';
+        // Load posts after successful login
+        loadPosts();
       } else {
         container.style.display = 'block';
         mainPage.style.display = 'none';
@@ -138,41 +162,96 @@ document.addEventListener('DOMContentLoaded', () => {
       alert("Something went wrong.");
     }
   });
-});
-document.getElementById('form').addEventListener('submit', async function(e) {
-  e.preventDefault();
 
- 
-  const titleEl       = document.getElementById('title');
-  const descEl        = document.getElementById('description');
-  const topicCheckbox = document.querySelectorAll('input[name="topic"]:checked');
+  // Add form submission handler inside DOMContentLoaded
+  document.getElementById('form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const checkbox = document.getElementById('Create');
+    checkbox.checked = false;
+   
+    const titleEl       = document.getElementById('title');
+    const descEl        = document.getElementById('description');
+    const topicCheckbox = document.querySelectorAll('input[name="topic"]:checked');
 
 
-  const title       = titleEl.value;
-  const description = descEl.value;
-  const topics      = Array.from(topicCheckbox).map(cb => cb.value);
+    const title       = titleEl.value;
+    const description = descEl.value;
+    const topics      = Array.from(topicCheckbox).map(cb => cb.value);
 
-  try {
-    const response = await fetch('/posts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, description, topics })
-    });
+    try {
+      const response = await fetch('/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, description, topics })
+      });
 
-    if (!response.ok) {
-      console.error('Server returned status', response.status);
-      return;
+      if (!response.ok) {
+        console.error('Server returned status', response.status);
+        return;
+      }
+
+      const payload = await response.json();
+     console.log('Title:', payload.title);
+      console.log('Description:', payload.content);
+      console.log('Topics:', payload.interest);
+      const post = document.getElementById('Post');
+      post.innerHTML = `
+        <h2>${payload.title}</h2>
+        <p>${payload.content}</p>
+        <p>Topics: ${payload.interest}</p>
+      `;
+      document.getElementById('errorMsg').style.display = 'none';
+      await loadPosts(); // Reload posts after successful creation
+    } catch (err) {
+      console.error('Error sending form:', err);
+      const errEl = document.getElementById('errorMsg');
+      errEl.textContent = 'An error occurred. Please try again.';
+      errEl.style.display = 'block';
     }
+  });
 
-    const payload = await response.json();
-    console.log('Server response:', payload.message);
-    document.getElementById('errorMsg').style.display = 'none';
-
-  } catch (err) {
-    console.error('Error sending form:', err);
-    const errEl = document.getElementById('errorMsg');
-    errEl.textContent = 'An error occurred. Please try again.';
-    errEl.style.display = 'block';
+  // Move loadPosts function outside the DOMContentLoaded listener
+  async function loadPosts() {
+    try {
+      const response = await fetch('/api/posts');
+      if (!response.ok) {
+        throw new Error('Failed to fetch posts');
+      }
+      const posts = await response.json();
+      
+      const postContainer = document.getElementById('Post');
+      postContainer.innerHTML = ''; // Clear existing posts
+      
+      if (posts.length === 0) {
+        postContainer.innerHTML = '<p class="no-posts">No posts yet!</p>';
+        return;
+      }
+      
+      posts.forEach(post => {
+        const postElement = document.createElement('article');
+        postElement.className = 'post-card';
+        postElement.innerHTML = `
+          <div class="post-header">
+            <h2>${post.title}</h2>
+            <span class="post-meta">Posted by ${post.author}</span>
+          </div>
+          <div class="post-content">
+            <p>${post.content}</p>
+          </div>
+          <div class="post-footer">
+            <div class="topics">
+              ${post.topics.map(topic => `<span class="topic-tag">${topic}</span>`).join('')}
+            </div>
+            <span class="post-date">${new Date(post.created_at).toLocaleString()}</span>
+          </div>
+        `;
+        postContainer.appendChild(postElement);
+      });
+    } catch (err) {
+      console.error('Error loading posts:', err);
+      const postContainer = document.getElementById('Post');
+      postContainer.innerHTML = '<p class="error">Error loading posts. Please try again later.</p>';
+    }
   }
 });
 
