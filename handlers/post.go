@@ -60,7 +60,16 @@ func PostsHandler(w http.ResponseWriter, r *http.Request) {
 
 func ApiPostsHandler(w http.ResponseWriter, r *http.Request) {
 	rows, err := databases.DB.Query(`
-        SELECT p.title, p.content, p.interest, p.user_id, p.created_at, u.nickname 
+        SELECT 
+            p.id,
+            p.title, 
+            p.content, 
+            p.interest, 
+            p.user_id, 
+            p.created_at, 
+            u.nickname,
+            (SELECT COUNT(*) FROM post_reactions WHERE post_id = p.id AND reaction_type = 'like') as likes,
+            (SELECT COUNT(*) FROM post_reactions WHERE post_id = p.id AND reaction_type = 'dislike') as dislikes
         FROM posts p
         JOIN users u ON p.user_id = u.id
         ORDER BY p.created_at DESC
@@ -74,20 +83,23 @@ func ApiPostsHandler(w http.ResponseWriter, r *http.Request) {
 	var posts []map[string]interface{}
 	for rows.Next() {
 		var title, content, interest, nickname string
-		var userID int
+		var id, userID, likes, dislikes int
 		var createdAt string
 
-		if err := rows.Scan(&title, &content, &interest, &userID, &createdAt, &nickname); err != nil {
+		if err := rows.Scan(&id, &title, &content, &interest, &userID, &createdAt, &nickname, &likes, &dislikes); err != nil {
 			http.Error(w, "Error scanning row", http.StatusInternalServerError)
 			return
 		}
 
 		post := map[string]interface{}{
+			"id":         id,
 			"title":      title,
 			"content":    content,
 			"topics":     strings.Split(interest, ","),
 			"author":     nickname,
 			"created_at": createdAt,
+			"likes":      likes,
+			"dislikes":   dislikes,
 		}
 		posts = append(posts, post)
 	}

@@ -213,39 +213,87 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error('Failed to fetch posts');
       }
       const posts = await response.json();
-      
+
       const postContainer = document.getElementById('Post');
       postContainer.innerHTML = ''; // Clear existing posts
-      
+
       if (posts.length === 0) {
         postContainer.innerHTML = '<p class="no-posts">No posts yet!</p>';
         return;
       }
-      
+
       posts.forEach(post => {
         const postElement = document.createElement('article');
         postElement.className = 'post-card';
         postElement.innerHTML = `
-          <div class="post-header">
-            <h2>${post.title}</h2>
-            <span class="post-meta">Posted by ${post.author}</span>
-          </div>
-          <div class="post-content">
-            <p>${post.content}</p>
-          </div>
-          <div class="post-footer">
-            <div class="topics">
-              ${post.topics.map(topic => `<span class="topic-tag">${topic}</span>`).join('')}
-            </div>
-            <span class="post-date">${new Date(post.created_at).toLocaleString()}</span>
-          </div>
-        `;
+                <div class="post-header">
+                    <h2>${post.title}</h2>
+                    <span class="post-meta">Posted by ${post.author}</span>
+                </div>
+                <div class="post-content">
+                    <p>${post.content}</p>
+                </div>
+                <div class="post-footer">
+                    <div class="topics">
+                        ${post.topics.map(topic => `<span class="topic-tag">${topic}</span>`).join('')}
+                    </div>
+                    <div class="reaction-buttons">
+                        <button class="like-button" data-post-id="${post.id}" data-type="like">
+                            <i class="fa fa-thumbs-up"></i> Like (<span class="like-count">${post.likes || 0}</span>)
+                        </button>
+                        <button class="dislike-button" data-post-id="${post.id}" data-type="dislike">
+                            <i class="fa fa-thumbs-down"></i> Dislike (<span class="dislike-count">${post.dislikes || 0}</span>)
+                        </button>
+                    </div>
+                    <span class="post-date">${new Date(post.created_at).toLocaleString()}</span>
+                </div>
+            `;
         postContainer.appendChild(postElement);
+      });
+
+      // Update event listeners for both like and dislike buttons
+      document.querySelectorAll('.like-button, .dislike-button').forEach(button => {
+        button.addEventListener('click', async (e) => {
+          const btn = e.target.closest('button');
+          const postId = btn.dataset.postId;
+          const reactionType = btn.dataset.type;
+          await handleReaction(postId, reactionType, btn);
+        });
       });
     } catch (err) {
       console.error('Error loading posts:', err);
       const postContainer = document.getElementById('Post');
       postContainer.innerHTML = '<p class="error">Error loading posts. Please try again later.</p>';
+    }
+  }
+
+  async function handleReaction(postId, reactionType, button) {
+    try {
+        const response = await fetch('/like', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                reaction_type: reactionType, 
+                post_id: postId 
+            }),
+        });
+
+        const data = await response.json();
+        
+        if (!response.ok) {
+            if (response.status === 409) {
+                alert(data.error);
+            } else {
+                throw new Error(data.error || `Failed to ${reactionType} post`);
+            }
+            return;
+        }
+
+        const countSpan = button.querySelector(`.${reactionType}-count`);
+        countSpan.textContent = data.like_count;
+    } catch (err) {
+        console.error(`Error ${reactionType}ing post:`, err);
+        alert(`Error ${reactionType}ing post. Please try again.`);
     }
   }
 });

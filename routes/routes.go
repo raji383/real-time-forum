@@ -23,6 +23,7 @@ func SetupRoutes() *mux.Router {
 	r.HandleFunc("/check-session", handlers.CheckSession)
 	r.HandleFunc("/posts", handlers.PostsHandler).Methods("POST")
 	r.HandleFunc("/api/posts", handlers.ApiPostsHandler).Methods("GET")
+    r.HandleFunc("/like", handlers.LikeHandler).Methods("POST")
 
 	return r
 }
