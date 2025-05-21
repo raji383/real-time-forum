@@ -34,7 +34,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	lastName := r.FormValue("last_name")
 	password := r.FormValue("password")
 	password2 := r.FormValue("confirm_password")
-
+	fmt.Println(username)
 	if password != password2 {
 		http.Error(w, "Passwords do not match", http.StatusBadRequest)
 		return
