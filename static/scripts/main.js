@@ -267,14 +267,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  async function handleReaction(postId, reactionType, button) {
+async function handleReaction(postId, reactionType, button) {
     try {
         const response = await fetch('/like', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 reaction_type: reactionType, 
-                post_id: postId 
+                post_id: parseInt(postId) // Ensure post_id is an integer
             }),
         });
 
@@ -282,20 +282,23 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (!response.ok) {
             if (response.status === 409) {
-                alert(data.error);
+                alert("Reaction updated or removed");
             } else {
                 throw new Error(data.error || `Failed to ${reactionType} post`);
             }
             return;
         }
 
-        const countSpan = button.querySelector(`.${reactionType}-count`);
-        countSpan.textContent = data.like_count;
+        // Update like and dislike counts
+        const likeCountSpan = button.parentElement.querySelector('.like-count');
+        const dislikeCountSpan = button.parentElement.querySelector('.dislike-count');
+        likeCountSpan.textContent = data.like_count;
+        dislikeCountSpan.textContent = data.dislike_count;
     } catch (err) {
         console.error(`Error ${reactionType}ing post:`, err);
         alert(`Error ${reactionType}ing post. Please try again.`);
     }
-  }
+}
 });
 
 
