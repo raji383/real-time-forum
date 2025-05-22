@@ -9,7 +9,7 @@ import (
 
 type LikeData struct {
     Reaction string `json:"reaction_type"`
-    PostID   int    `json:"post_id"` // Changed from string to int
+    PostID   int    `json:"post_id"`
 }
 
 func LikeHandler(w http.ResponseWriter, r *http.Request) {

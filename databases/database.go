@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	_ "github.com/mattn/go-sqlite3" // Import the driver anonymously
 
+	_ "github.com/mattn/go-sqlite3" // Import the driver anonymously
 )
 
 var DB *sql.DB
@@ -79,6 +79,13 @@ func init() {
 			FOREIGN KEY (comment_id) REFERENCES comments(id) ON DELETE CASCADE,
 			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
 			UNIQUE(comment_id, user_id)
+		);
+		CREATE TABLE IF NOT EXISTS messages (
+    		id INTEGER PRIMARY KEY AUTOINCREMENT,
+    		sender TEXT NOT NULL,
+    		recipient TEXT NOT NULL,
+    		content TEXT NOT NULL,
+    		timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
 		);
 `
 	_, err = DB.Exec(creat)

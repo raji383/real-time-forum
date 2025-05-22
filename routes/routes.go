@@ -2,6 +2,7 @@ package routes
 
 import (
 	"net/http"
+
 	"real-time-forum/handlers"
 
 	"github.com/gorilla/mux"
@@ -23,11 +24,15 @@ func SetupRoutes() *mux.Router {
 	r.HandleFunc("/check-session", handlers.CheckSession)
 	r.HandleFunc("/posts", handlers.PostsHandler).Methods("POST")
 	r.HandleFunc("/api/posts", handlers.ApiPostsHandler).Methods("GET")
-    r.HandleFunc("/like", handlers.LikeHandler).Methods("POST")
+	r.HandleFunc("/like", handlers.LikeHandler).Methods("POST")
 	// Add these to your SetupRoutes function
-r.HandleFunc("/api/comments", handlers.GetCommentsHandler).Methods("GET")
-r.HandleFunc("/comments", handlers.CreateCommentHandler).Methods("POST")
-r.HandleFunc("/comment-reaction", handlers.CommentReactionHandler).Methods("POST")
+	r.HandleFunc("/api/comments", handlers.GetCommentsHandler).Methods("GET")
+	r.HandleFunc("/comments", handlers.CreateCommentHandler).Methods("POST")
+	r.HandleFunc("/comment-reaction", handlers.CommentReactionHandler).Methods("POST")
+	r.HandleFunc("/api/users", handlers.GetAllUsersHandler).Methods("GET")
+	// Messaging
+	r.HandleFunc("/messages", handlers.SendMessageHandler).Methods("POST")
+	r.HandleFunc("/api/messages", handlers.GetMessagesHandler).Methods("GET")
 
 	return r
 }

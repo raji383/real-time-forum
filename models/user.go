@@ -13,6 +13,6 @@ type User struct {
 }
 
 type LoginRequest struct {
-    Identity string `json:"identity"` // Can be either email or nickname
+    Identity string `json:"identity"` 
     Password string `json:"password"`
 }

@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"database/sql"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -17,6 +18,25 @@ import (
 
 type User struct {
 	Username string
+}
+
+func GetAllUsersHandler(w http.ResponseWriter, r *http.Request) {
+	rows, err := databases.DB.Query("SELECT nickname FROM users")
+	if err != nil {
+		http.Error(w, "Database error", http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	var users []string
+	for rows.Next() {
+		var nickname string
+		if err := rows.Scan(&nickname); err == nil {
+			users = append(users, nickname)
+		}
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(users)
 }
 
 func Signup(w http.ResponseWriter, r *http.Request) {
@@ -131,7 +151,7 @@ func CheckSession(w http.ResponseWriter, r *http.Request) {
 
 	// Get user info
 	username := GetUserInfo(userID)
-	
+
 	w.Header().Set("Content-Type", "application/json")
 	w.Write([]byte(fmt.Sprintf(`{"loggedIn": true, "username": "%s"}`, username.Username)))
 }

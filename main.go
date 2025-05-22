@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"real-time-forum/database"
+
+
 	"real-time-forum/routes"
 )
 
 func main() {
-	database.InitDB()
-	defer database.DB.Close()
+
 
 	router := routes.SetupRoutes()
 

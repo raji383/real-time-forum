@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Handle post creation form
-  document.getElementById('form')?.addEventListener('submit', async function(e) {
+  document.getElementById('form')?.addEventListener('submit', async function (e) {
     e.preventDefault();
     await createPost();
   });
@@ -122,12 +122,13 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const response = await fetch('/check-session');
       const data = await response.json();
-      
+
       if (data.loggedIn) {
         mainPage.style.display = 'block';
         usernameDisplay.textContent = `Welcome, ${data.username}!`;
         container.style.display = 'none';
         loadPosts();
+        showMessagingUI();
       } else {
         container.style.display = 'block';
         mainPage.style.display = 'none';
@@ -183,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function createPost() {
     const checkbox = document.getElementById('Create');
     checkbox.checked = false;
-   
+
     const titleEl = document.getElementById('title');
     const descEl = document.getElementById('description');
     const topicCheckbox = document.querySelectorAll('input[name="topic"]:checked');
@@ -218,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const response = await fetch('/api/posts');
       if (!response.ok) throw new Error('Failed to fetch posts');
-      
+
       const posts = await response.json();
       const postContainer = document.getElementById('Post');
       postContainer.innerHTML = '';
@@ -232,12 +233,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const postElement = document.createElement('div');
         postElement.innerHTML = renderPostWithComments(post);
         postContainer.appendChild(postElement);
-        
+
         loadComments(post.id);
         setupCommentForm(post.id);
       });
 
       setupReactionListeners();
+      setupToggleCommentsListeners();
     } catch (err) {
       console.error('Error loading posts:', err);
       const postContainer = document.getElementById('Post');
@@ -269,7 +271,8 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
           <span class="post-date">${new Date(post.created_at).toLocaleString()}</span>
         </div>
-        <div class="post-comments">
+        <button class="toggle-comments-btn" data-post-id="${post.id}">Show Comments</button>
+        <div class="post-comments" id="post-comments-${post.id}" style="display:none;">
           <h3>Comments</h3>
           <form id="comment-form-${post.id}" class="comment-form">
             <textarea placeholder="Add a comment..." required></textarea>
@@ -297,17 +300,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const response = await fetch('/like', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          reaction_type: reactionType, 
+        body: JSON.stringify({
+          reaction_type: reactionType,
           post_id: parseInt(postId)
         }),
       });
 
       const data = await response.json();
-      
+
       if (!response.ok) {
         if (response.status === 409) {
-          alert("Reaction updated or removed");
+
         } else {
           throw new Error(data.error || `Failed to ${reactionType} post`);
         }
@@ -326,10 +329,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function loadComments(postId) {
     const commentsContainer = document.getElementById(`comments-${postId}`);
-    
+
     try {
       commentsContainer.innerHTML = '<div class="loading">Loading comments...</div>';
-      
+
       const response = await fetch(`/api/comments?post_id=${postId}`);
       if (!response.ok) throw new Error('Failed to fetch comments');
 
@@ -400,14 +403,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const response = await fetch('/comment-reaction', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           comment_id: parseInt(commentId),
           reaction_type: reactionType
         }),
       });
 
       const data = await response.json();
-      
+
       if (!response.ok) {
         if (response.status === 409) {
           alert("Reaction updated or removed");
@@ -438,7 +441,7 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const content = textarea.value.trim();
-      
+
       if (!content) {
         errorDiv.textContent = 'Please enter a comment';
         errorDiv.style.display = 'block';
@@ -453,7 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const response = await fetch('/comments', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
+          body: JSON.stringify({
             post_id: postId,
             content: content
           }),
@@ -473,4 +476,156 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  function setupToggleCommentsListeners() {
+    document.querySelectorAll('.toggle-comments-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        const postId = button.dataset.postId;
+        const commentsDiv = document.getElementById(`post-comments-${postId}`);
+        if (commentsDiv.style.display === 'none') {
+          commentsDiv.style.display = 'block';
+          button.textContent = 'Hide Comments';
+        } else {
+          commentsDiv.style.display = 'none';
+          button.textContent = 'Show Comments';
+        }
+      });
+    });
+  }
+
+  // --- Messaging UI and Logic ---
+
+  // Add a simple messaging UI to the main page
+  // Add messaging UI to the main page
+  const messagingSection = document.createElement('section');
+  messagingSection.id = 'messagingSection';
+  messagingSection.innerHTML = `
+    <div id="messaging-container" style="display:none; margin-top: 30px;">
+      <h3 id="user" >Send Message to</h3>
+      <form id="messageForm">
+       <div id="messagesBorder" class="messages-border">
+        <div id="messagesList" class="messages-list"></div>
+      </div>
+        <input type="text" id="recipient" placeholder="Recipient username" hidden />
+        <input type="text" id="messageInput" placeholder="Type your message..." required />
+        <button type="submit">Send</button>
+      </form>
+     
+    </div>
+  `;
+  mainPage.appendChild(messagingSection);
+
+  // Show messaging UI when logged in
+
+
+  // Fetch and display messages between current user and another user
+  async function loadMessages(recipient) {
+    try {
+      const response = await fetch(`/api/messages?recipient="${encodeURIComponent(recipient)}"`);
+      if (!response.ok) throw new Error('Failed to fetch messages');
+      const messages = await response.json();
+      const messagesList = document.getElementById('messagesList');
+      messagesList.innerHTML = '';
+      if (messages.length === 0) {
+        messagesList.innerHTML = '<p>No messages yet.</p>';
+        return;
+      }
+      messages.forEach(msg => {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'message-item';
+        msgDiv.innerHTML = `<b>${msg.sender}:</b> ${msg.content} <span style="font-size:0.8em;color:#888;">${new Date(msg.timestamp).toLocaleString()}</span>`;
+        messagesList.appendChild(msgDiv);
+      });
+    } catch (err) {
+      document.getElementById('messagesList').innerHTML = '<p>Error loading messages.</p>';
+    }
+  }
+
+  // Handle sending a message
+  const messageForm = document.getElementById('messageForm');
+  if (messageForm) {
+    messageForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const recipient = document.getElementById('recipient').value.trim();
+      const content = document.getElementById('messageInput').value.trim();
+      if (!recipient || !content) return;
+      try {
+        const response = await fetch('/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ recipient, content })
+        });
+        if (!response.ok) throw new Error('Failed to send message');
+        document.getElementById('messageInput').value = '';
+        await loadMessages(recipient);
+      } catch (err) {
+        alert('Error sending message.');
+      }
+    });
+  }
+
+  // Optionally, you can add a button to open the messaging UI and load messages for a specific user
+  // For now, show the messaging UI when logged in
+  checkSession = async function () {
+    try {
+      const response = await fetch('/check-session');
+      const data = await response.json();
+      if (data.loggedIn) {
+        mainPage.style.display = 'block';
+        usernameDisplay.textContent = `Welcome, ${data.username}!`;
+        container.style.display = 'none';
+        loadPosts();
+        showMessagingUI();
+      } else {
+        container.style.display = 'block';
+        mainPage.style.display = 'none';
+        body.style.display = 'flex';
+        body.style.alignItems = 'center';
+        body.style.justifyContent = 'center';
+        body.style.height = '100vh';
+      }
+    } catch (error) {
+      console.error('Error checking session:', error);
+    }
+  }
+
+  // Add user sidebar to the main page
+  const userSidebar = document.createElement('div');
+  userSidebar.id = 'userSidebar';
+
+  userSidebar.innerHTML = '<h3 style="text-align:center;color:#00ff9d;margin-bottom:10px;">Users</h3><div id="userList"></div>';
+  document.body.appendChild(userSidebar);
+
+  // Fetch and display all users in the sidebar
+  async function loadUsers() {
+    try {
+      const response = await fetch('/api/users');
+      if (!response.ok) throw new Error('Failed to fetch users');
+      const users = await response.json();
+      const userList = document.getElementById('userList');
+      userList.innerHTML = '';
+      users.forEach(user => {
+        const userDiv = document.createElement('div');
+        userDiv.className = 'user-list-item';
+        userDiv.style = 'padding:6px 0;cursor:pointer;border-bottom:1px solid #eee;';
+        userDiv.textContent = user;
+        userDiv.addEventListener('click', () => {
+          document.getElementById('recipient').value = user;
+          document.getElementById('user').textContent = `Send Message to ${user}`;
+          loadMessages(user);
+          if(document.getElementById('messaging-container').style.display == 'block'){
+            document.getElementById('messaging-container').style.display = 'none';
+          }else{
+            document.getElementById('messaging-container').style.display = 'block';
+          }
+        });
+        userList.appendChild(userDiv);
+      });
+    } catch (err) {
+      document.getElementById('userList').innerHTML = '<p>Error loading users.</p>';
+    }
+  }
+
+  // Call loadUsers on page load
+  loadUsers();
 });
