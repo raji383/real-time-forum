@@ -12,11 +12,19 @@
 /* Body Styling */
 body {
   background: linear-gradient(135deg, #1e1e2f 0%, #2a2a4a 100%);
-  min-height: 100vh;
+
   display: flex;
+  width: 100%;
   flex-direction: column;
   align-items: center;
   color: #e0e0e0;
+}
+
+#navigateur {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 20px;
 }
 
 /* Container for Login/Signup */
@@ -70,7 +78,9 @@ body {
 }
 
 /* Input and Select Styling */
-input, select, textarea {
+input,
+select,
+textarea {
   background: rgba(255, 255, 255, 0.1);
   border: none;
   padding: 12px 16px;
@@ -83,21 +93,25 @@ input, select, textarea {
 }
 
 textarea {
-  resize: vertical;
-  min-height: 80px;
+  resize: none;
+  min-height: 50px;
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
   outline: none;
   background: rgba(255, 255, 255, 0.15);
   box-shadow: 0 0 8px rgba(0, 255, 163, 0.3);
 }
 
-input::placeholder, textarea::placeholder {
+input::placeholder,
+textarea::placeholder {
   color: #a0a0a0;
 }
 
-form h1, form h3 {
+form h1,
+form h3 {
   font-weight: 600;
   font-size: 24px;
   margin-bottom: 20px;
@@ -172,7 +186,8 @@ form h1, form h3 {
 }
 
 /* Buttons */
-button, #Create1 {
+button,
+#Create1 {
   background: linear-gradient(90deg, #00ff9d, #00c4ff);
   color: #1a1a2e;
   border: none;
@@ -202,20 +217,64 @@ button.ghost:hover {
 
 /* Post Creation Form */
 section .container {
+  display: none;
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
-  padding: 20px;
-  margin: 20px auto;
-  max-width: 600px;
+
+
+  padding: 15PX;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: 0.5s animt ease-in-out;
+  z-index: 10;
+
 }
 
-.div-title, .div-description {
+.topic-options label {
+  font-weight: 400;
+  color: #444;
+  cursor: pointer;
+}
+
+.topic-options input[type="checkbox"] {
+  margin-right: 6px;
+  transform: scale(1.1);
+}
+
+body:has(#Create:checked) section .container {
+  display: block;
+}
+
+body:has(#Create:checked) #mainPage {
+  opacity: 0.3;
+}
+
+@keyframes animt {
+  0% {
+    opacity: 0;
+    top: -10%;
+    transform: translate(-50%, 0);
+  }
+
+  100% {
+    opacity: 1;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+
+.div-title,
+.div-description {
   margin-bottom: 20px;
 }
 
-.div-title label, .div-description label {
+.div-title label,
+.div-description label {
   display: block;
   font-size: 14px;
   font-weight: 600;
@@ -252,8 +311,8 @@ section .container {
 
 /* Main Page */
 #mainPage {
+  opacity: 1;
   width: 100%;
-  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
 }
@@ -264,6 +323,8 @@ section .container {
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;
+  width: 50%;
+  margin: auto;
   padding: 20px;
   margin-bottom: 20px;
   transition: all 0.3s ease;
@@ -320,7 +381,8 @@ section .container {
   gap: 10px;
 }
 
-.like-button, .dislike-button {
+.like-button,
+.dislike-button {
   background: none;
   border: none;
   color: #a0a0a0;
@@ -332,12 +394,14 @@ section .container {
   transition: all 0.3s ease;
 }
 
-.like-button:hover, .dislike-button:hover {
+.like-button:hover,
+.dislike-button:hover {
   color: #00ff9d;
   transform: scale(1.1);
 }
 
-.like-button.active, .dislike-button.active {
+.like-button.active,
+.dislike-button.active {
   color: #00ff9d;
   font-weight: 600;
 }
@@ -407,7 +471,8 @@ section .container {
   margin-top: 8px;
 }
 
-.comment-like-button, .comment-dislike-button {
+.comment-like-button,
+.comment-dislike-button {
   background: none;
   border: none;
   color: #a0a0a0;
@@ -419,12 +484,14 @@ section .container {
   transition: all 0.3s ease;
 }
 
-.comment-like-button:hover, .comment-dislike-button:hover {
+.comment-like-button:hover,
+.comment-dislike-button:hover {
   color: #00ff9d;
   transform: scale(1.1);
 }
 
-.comment-like-button.active, .comment-dislike-button.active {
+.comment-like-button.active,
+.comment-dislike-button.active {
   color: #00ff9d;
   font-weight: 600;
 }
@@ -470,6 +537,7 @@ section .container {
 #logoutButton {
   background: linear-gradient(90deg, #ff4b2b, #ff416c);
   color: #fff;
+  margin-top: -2vh;
   padding: 10px 20px;
   border: none;
   border-radius: 50px;
@@ -507,7 +575,8 @@ section .container {
     display: none;
   }
 
-  .sign-up-container, .sign-in-container {
+  .sign-up-container,
+  .sign-in-container {
     width: 100%;
     transform: none !important;
   }
