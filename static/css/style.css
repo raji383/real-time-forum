@@ -635,6 +635,38 @@ body:has(#Create:checked) #mainPage {
   color: #00ff9d;
 }
 
+.message-item.sent {
+    align-self: flex-end;
+    background-color: #00ff9d22;
+    margin-left: auto;
+    border-radius: 15px 15px 0 15px;
+}
+
+.message-item.received {
+    align-self: flex-start;
+    background-color: #2a2a4a;
+    margin-right: auto;
+    border-radius: 15px 15px 15px 0;
+}
+
+.message-content {
+    padding: 8px 12px;
+}
+
+.message-sender {
+    font-size: 0.8em;
+    color: #00ff9d;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.message-time {
+    font-size: 0.7em;
+    color: #666;
+    margin-top: 4px;
+    display: block;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   #container {

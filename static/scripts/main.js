@@ -125,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (data.loggedIn) {
         mainPage.style.display = 'block';
+        currentUser = data.username; // Store current user's username
         usernameDisplay.textContent = `Welcome, ${data.username}!`;
         container.style.display = 'none';
         loadPosts();
@@ -141,6 +142,15 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Error checking session:', error);
     }
   }
+
+  function showMessagingUI() {
+    const messagingContainer = document.getElementById('messaging-container');
+    if (messagingContainer) {
+        messagingContainer.style.display = 'none'; // Initially hidden until user clicks on a contact
+    }
+    loadUsers(); // Load users list
+    connectWebSocket(); // Initialize WebSocket connection
+}
 
   async function logout() {
     try {
@@ -521,23 +531,40 @@ document.addEventListener('DOMContentLoaded', () => {
   // Fetch and display messages between current user and another user
   async function loadMessages(recipient) {
     try {
-      const response = await fetch(`/api/messages?recipient="${encodeURIComponent(recipient)}"`);
-      if (!response.ok) throw new Error('Failed to fetch messages');
-      const messages = await response.json();
       const messagesList = document.getElementById('messagesList');
+      messagesList.innerHTML = '<div class="loading">Loading messages...</div>';
+      
+      const response = await fetch(`/api/messages?recipient=${encodeURIComponent(recipient)}`);
+      if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const messages = await response.json();
+      
       messagesList.innerHTML = '';
       if (messages.length === 0) {
-        messagesList.innerHTML = '<p>No messages yet.</p>';
-        return;
+          messagesList.innerHTML = '<p class="no-messages">No messages yet.</p>';
+          return;
       }
+
       messages.forEach(msg => {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = 'message-item';
-        msgDiv.innerHTML = `<b>${msg.sender}:</b> ${msg.content} <span style="font-size:0.8em;color:#888;">${new Date(msg.timestamp).toLocaleString()}</span>`;
-        messagesList.appendChild(msgDiv);
+          const msgDiv = document.createElement('div');
+          msgDiv.className = `message-item ${msg.sender === currentUser ? 'sent' : 'received'}`;
+          msgDiv.innerHTML = `
+              <div class="message-content">
+                  <span class="message-sender">${msg.sender}</span>
+                  <p>${msg.content}</p>
+                  <span class="message-time">${new Date(msg.timestamp).toLocaleString()}</span>
+              </div>
+          `;
+          messagesList.appendChild(msgDiv);
       });
+      
+      // Scroll to bottom of messages
+      messagesList.scrollTop = messagesList.scrollHeight;
     } catch (err) {
-      document.getElementById('messagesList').innerHTML = '<p>Error loading messages.</p>';
+      console.error('Error loading messages:', err);
+      document.getElementById('messagesList').innerHTML = 
+          '<p class="error">Error loading messages. Please try again.</p>';
     }
   }
 
@@ -628,4 +655,109 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Call loadUsers on page load
   loadUsers();
+
+  let ws = null;
+  let currentChatUser = null;
+
+  function connectWebSocket() {
+      ws = new WebSocket(`ws://${window.location.host}/ws`);
+      
+      ws.onopen = () => {
+          console.log('WebSocket Connected');
+      };
+
+      ws.onmessage = (event) => {
+          const message = JSON.parse(event.data);
+          
+          switch(message.type) {
+              case 'userList':
+                  updateOnlineUsers(message.content);
+                  break;
+              case 'privateMessage':
+                  handleNewMessage(message);
+                  break;
+          }
+      };
+
+      ws.onclose = () => {
+          console.log('WebSocket Disconnected');
+          setTimeout(connectWebSocket, 1000);
+      };
+  }
+
+  function updateOnlineUsers(users) {
+      const userList = document.getElementById('userList');
+      if (!userList) return;
+      
+      userList.innerHTML = users.map(user => `
+          <div class="user-list-item ${user.online ? 'online' : 'offline'}"
+               onclick="openChat('${user.username}')">
+              ${user.username}
+              ${user.online ? '🟢' : '⚪'}
+          </div>
+      `).join('');
+  }
+
+  function handleNewMessage(message) {
+    const messagesList = document.getElementById('messagesList');
+    if (!messagesList) return;
+
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'message-item ' + (message.from === currentUser ? 'sent' : 'received');
+    msgDiv.innerHTML = `
+        <div class="message-content">
+            <p>${message.content}</p>
+            <span class="message-time">${new Date(message.timestamp).toLocaleString()}</span>
+        </div>
+    `;
+    messagesList.appendChild(msgDiv);
+    messagesList.scrollTop = messagesList.scrollHeight;
+}
+
+// Add message pagination
+let messageOffset = 0;
+const messageLimit = 10;
+
+async function loadMoreMessages(recipient) {
+    try {
+        const response = await fetch(`/api/messages?recipient=${encodeURIComponent(recipient)}&offset=${messageOffset}&limit=${messageLimit}`);
+        if (!response.ok) throw new Error('Failed to fetch messages');
+        const messages = await response.json();
+        const messagesList = document.getElementById('messagesList');
+        messages.forEach(msg => {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'message-item';
+            msgDiv.innerHTML = `<b>${msg.sender}:</b> ${msg.content} <span style="font-size:0.8em;color:#888;">${new Date(msg.timestamp).toLocaleString()}</span>`;
+            messagesList.appendChild(msgDiv);
+        });
+        messageOffset += messages.length;
+    } catch (err) {
+        console.error('Error loading messages:', err);
+    }
+}
+
+  function sendMessage(content) {
+      if (!ws || !currentChatUser) return;
+      
+      ws.send(JSON.stringify({
+          type: 'privateMessage',
+          to: currentChatUser,
+          content: content
+      }));
+  }
+
+  // Update message form handler
+  messageForm?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const content = document.getElementById('messageInput').value.trim();
+      if (!content) return;
+      
+      sendMessage(content);
+      document.getElementById('messageInput').value = '';
+  });
+
+  // Initialize WebSocket connection when logged in
+  if (mainPage.style.display === 'block') {
+      connectWebSocket();
+  }
 });

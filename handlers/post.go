@@ -108,9 +108,7 @@ func ApiPostsHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(posts)
 }
 
-
 // handlers/comments.go
-
 
 type CommentData struct {
 	PostID  int    `json:"post_id"`
@@ -162,37 +160,38 @@ func CreateCommentHandler(w http.ResponseWriter, r *http.Request) {
 func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 	postID := r.URL.Query().Get("post_id")
 	if postID == "" {
-		http.Error(w, "Post ID is required", http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode([]map[string]interface{}{})
 		return
 	}
 
 	rows, err := databases.DB.Query(`
-		SELECT 
-			c.id,
-			c.content,
-			c.created_at,
-			u.nickname,
-			(SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
-			(SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes
-		FROM comments c
-		JOIN users u ON c.user_id = u.id
-		WHERE c.post_id = ?
-		ORDER BY c.created_at DESC
-	`, postID)
+        SELECT 
+            c.id,
+            c.content,
+            c.created_at,
+            u.nickname,
+            (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'like') as likes,
+            (SELECT COUNT(*) FROM comment_reactions WHERE comment_id = c.id AND reaction_type = 'dislike') as dislikes
+        FROM comments c
+        JOIN users u ON c.user_id = u.id
+        WHERE c.post_id = ?
+        ORDER BY c.created_at DESC
+    `, postID)
 	if err != nil {
-		http.Error(w, "Database error", http.StatusInternalServerError)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode([]map[string]interface{}{})
 		return
 	}
 	defer rows.Close()
 
-	var comments []map[string]interface{}
+	comments := make([]map[string]interface{}, 0) // Initialize as empty array
 	for rows.Next() {
 		var id, likes, dislikes int
 		var content, createdAt, nickname string
 
 		if err := rows.Scan(&id, &content, &createdAt, &nickname, &likes, &dislikes); err != nil {
-			http.Error(w, "Error scanning row", http.StatusInternalServerError)
-			return
+			continue
 		}
 
 		comment := map[string]interface{}{
@@ -207,7 +206,10 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(comments)
+	if err = json.NewEncoder(w).Encode(comments); err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode([]map[string]interface{}{})
+	}
 }
 
 func CommentReactionHandler(w http.ResponseWriter, r *http.Request) {
@@ -291,8 +293,8 @@ func CommentReactionHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]interface{}{
-		"success":    true,
-		"like_count": likes,
+		"success":       true,
+		"like_count":    likes,
 		"dislike_count": dislikes,
 	})
 }

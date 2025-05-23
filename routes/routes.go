@@ -33,6 +33,8 @@ func SetupRoutes() *mux.Router {
 	// Messaging
 	r.HandleFunc("/messages", handlers.SendMessageHandler).Methods("POST")
 	r.HandleFunc("/api/messages", handlers.GetMessagesHandler).Methods("GET")
+	// WebSocket endpoint
+	r.HandleFunc("/ws", handlers.HandleWebSocket)
 
 	return r
 }
